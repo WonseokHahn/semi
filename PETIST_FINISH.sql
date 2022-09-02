@@ -1,0 +1,1146 @@
+-- 관리자 계정
+
+--CREATE USER PETIST IDENTIFIED BY PETIST;
+--GRANT CONNECT, RESOURCE TO PETIST;
+
+-- PETIST 계정
+
+DROP TABLE MEMBER CASCADE CONSTRAINTS;
+DROP TABLE HOSPITAL CASCADE CONSTRAINTS;
+DROP TABLE HOSPITAL_INFO CASCADE CONSTRAINTS; 
+DROP TABLE HOSPITAL_REVIEW CASCADE CONSTRAINTS;
+DROP TABLE ANIMAL CASCADE CONSTRAINTS;
+DROP TABLE DIARY CASCADE CONSTRAINTS;
+DROP TABLE COMMUNITY CASCADE CONSTRAINTS;
+DROP TABLE NOTICE CASCADE CONSTRAINTS;
+DROP TABLE NOTICECOMMENT CASCADE CONSTRAINTS;
+DROP TABLE INQUIRY CASCADE CONSTRAINTS;
+DROP TABLE CATEGORY CASCADE CONSTRAINTS;
+DROP TABLE REPLY CASCADE CONSTRAINTS;
+DROP TABLE INREPLY CASCADE CONSTRAINTS;
+DROP TABLE COATTACHMENT CASCADE CONSTRAINTS;
+DROP TABLE USERREPLY CASCADE CONSTRAINTS;
+--------------------------------------------------
+---------------    SEQUENCE 관련   ------------------   
+--------------------------------------------------
+DROP SEQUENCE SEQ_CNO; -- 공통 식별번호로 쓸 시퀀스
+DROP SEQUENCE SEQ_FNO; -- 파일 식별번호로 쓸 시퀀스
+
+-- 승희
+DROP SEQUENCE SEQ_INO; -- 문의사항 식별번호로 쓸 시퀀스
+DROP SEQUENCE SEQ_IRNO; -- 문의 사항 댓글 식별변호로 쓸 시퀀스
+-- 원석
+DROP SEQUENCE SEQ_ANO; -- 반려동물 식별번호로 쓸 시퀀스
+DROP SEQUENCE SEQ_DNO; -- 다이어리 식별번호로 쓸 시퀀스
+-- 성준
+DROP SEQUENCE SEQ_NNO; -- 공지사항 시퀀스
+DROP SEQUENCE SEQ_NOCMT; -- 공지사항 댓글 시퀀스
+-- 유진
+DROP SEQUENCE SEQ_CRNO; -- 커뮤니티 댓글 식별번호로 쓸 시퀀스
+
+-- 공통 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_CNO 
+NOCACHE;
+
+-- 파일 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_FNO
+NOCACHE;
+
+-- 반려동물 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_ANO 
+START WITH 50
+NOCACHE;
+-- 반려동물 다이어리 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_DNO 
+NOCACHE;
+-- 문의사항 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_INO
+NOCACHE;
+-- 문의사항 댓글 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_IRNO
+NOCACHE;
+-- 공지사항 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_NNO
+NOCACHE;
+-- 공지사항 댓글 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_NOCMT
+NOCACHE;
+
+-- 커뮤니티용 댓글 식별번호로 쓸 시퀀스
+CREATE SEQUENCE SEQ_CRNO
+NOCACHE;
+
+
+--------------------------------------------------
+----------------     MEMBER 관련   ------------------   
+--------------------------------------------------
+
+CREATE TABLE MEMBER (
+   MEMBER_ID VARCHAR2(20) PRIMARY KEY,
+   MEMBER_PWD VARCHAR2(40) NOT NULL,
+   MEMBER_NAME   VARCHAR2(50) NOT NULL,
+   MEMBER_FNO VARCHAR2(15) NOT NULL,
+   MEMBER_BNO VARCHAR2(15) NOT NULL,
+   GENDER VARCHAR2(3) NOT NULL,
+   PHONE VARCHAR2(13),
+   EMAIL VARCHAR2(50) NOT NULL,
+   STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N', 'B')), -- 기본회원 : Y, 탈퇴한회원 : N, 정지당한 회원 : B 
+   MEMBER_CODE   NUMBER   DEFAULT 1 
+);
+
+COMMENT ON COLUMN MEMBER.MEMBER_ID IS '아이디';
+COMMENT ON COLUMN MEMBER.MEMBER_PWD IS '비밀번호';
+COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '이름';
+COMMENT ON COLUMN MEMBER.MEMBER_FNO IS '주민등록번호앞자리';
+COMMENT ON COLUMN MEMBER.MEMBER_BNO IS '주민등록번호뒷자리';
+COMMENT ON COLUMN MEMBER.GENDER IS '성별';
+COMMENT ON COLUMN MEMBER.PHONE IS '연락처';
+COMMENT ON COLUMN MEMBER.EMAIL IS '이메일';
+COMMENT ON COLUMN MEMBER.STATUS IS '회원상태(Y/N/B)';
+COMMENT ON COLUMN MEMBER.MEMBER_CODE IS '회원코드';
+
+INSERT INTO MEMBER
+VALUES ('admin', '1111', '관리자', '970714', '1000000', '남', '010-1234-1234', 'admin@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user01', 'pass01', '사용자1', '111111', '1011111', '남', '010-1111-1111', 'user01@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user02', 'pass02', '사용자2', '222222', '1022222', '남', '010-2222-2222', 'user02@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user03', 'pass03', '사용자3', '333333', '1033333', '남', '010-3333-3333', 'user03@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user04', 'pass04', '사용자4', '444444', '1044444', '남', '010-4444-4444', 'user04@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user05', 'pass05', '사용자5', '555555', '1055555', '남', '010-5555-5555', 'user05@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user06', 'pass06', '사용자6', '666666', '1066666', '남', '010-6666-6666', 'user06@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user07', 'pass07', '사용자7', '777777', '1077777', '남', '010-7777-7777', 'user07@email.co.kr', 'B', DEFAULT);
+INSERT INTO MEMBER
+VALUES ('user08', 'pass08', '사용자8', '888888', '1088888', '남', '010-8888-8888', 'user08@email.co.kr', 'N', DEFAULT);
+
+
+--------------------------------------------------
+---------------    HOSPITAL 관련     ----------------   
+--------------------------------------------------
+
+CREATE TABLE HOSPITAL (
+   HOSP_ID   VARCHAR2(20) PRIMARY KEY,
+   HOSP_PWD VARCHAR2(40) NOT NULL,
+    HOSP_NAME VARCHAR2(50) NOT NULL,
+   HOSP_CRN NUMBER NOT NULL,
+   HOSP_EMAIL VARCHAR2(50) NOT NULL,
+   STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N', 'B')), -- 기본회원 : Y, 탈퇴한회원 : N, 정지당한 회원 : B    
+   HOSP_CODE NUMBER DEFAULT 2 
+);
+
+COMMENT ON COLUMN HOSPITAL.HOSP_ID IS '아이디';
+COMMENT ON COLUMN HOSPITAL.HOSP_PWD IS '비밀번호';
+COMMENT ON COLUMN HOSPITAL.HOSP_NAME IS '병원명';
+COMMENT ON COLUMN HOSPITAL.HOSP_CRN IS '병원등록번호';
+COMMENT ON COLUMN HOSPITAL.HOSP_EMAIL IS '이메일';
+COMMENT ON COLUMN HOSPITAL.STATUS IS '회원상태(Y/N/B)';
+COMMENT ON COLUMN HOSPITAL.HOSP_CODE IS '회원코드';
+
+-- 병원 회원 더미
+INSERT INTO HOSPITAL
+VALUES('hosp01', 'pass01', '청주지웰동물병원', '11111111', 'hosp01@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp02', 'pass02', '이승진동물병원', '22222222', 'hosp02@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp03', 'pass03', '메이동물메디컬센터', '33333333', 'hosp03@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp04', 'pass04', '(춘천)현대동물병원', '44444444', 'hosp04@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp05', 'pass05', '꿈이크는동물병원', '55555555', 'hosp05@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp06', 'pass06', '(강남)그레이스동물병원', '66666666', 'hosp06@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp07', 'pass07', '서울대학교 수의과대학 동물병원', '77777777', 'hosp07@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp08', 'pass08', '정든동물병원', '88888888', 'hosp08@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp09', 'pass09', '조양래동물병원', '99999999', 'hosp09@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp10', 'pass10', '누리동물병원', '12121212', 'hosp10@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp11', 'pass11', '애니펫동물병원', '12121212', 'hosp11@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp12', 'pass12', '하임동물의료센터', '12121212', 'hosp12@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp13', 'pass13', '우리들동물메디컬센터', '12121212', 'hosp13@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp14', 'pass14', '24시해든동물메디컬센터', '16867212', 'hosp14@email.co.kr', DEFAULT, DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp15', 'pass15', '병원15', '12121234', 'hosp15@email.co.kr', 'B', DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp16', 'pass16', '병원16', '12121234', 'hosp15@email.co.kr', 'N', DEFAULT);
+INSERT INTO HOSPITAL
+VALUES('hosp17', 'pass17', 'NEW병원', '11111111', 'hosp15@email.co.kr', 'Y', DEFAULT);
+
+--------------------------------------------------
+---------------  HOSPITAL_INFO 관련   --------------   
+--------------------------------------------------
+
+
+CREATE TABLE HOSPITAL_INFO (
+    HOSP_NO NUMBER PRIMARY KEY,
+    HOSP_ID VARCHAR2(20) NOT NULL REFERENCES HOSPITAL(HOSP_ID) ON DELETE CASCADE,
+    HOSP_NAME VARCHAR2(60) NOT NULL,
+    ADDRESS VARCHAR2(300) NOT NULL,
+    ADDRESS_DETAIL VARCHAR2(300),
+    Y_COORDINATE NUMBER NOT NULL,
+    X_COORDINATE NUMBER NOT NULL,
+    OPERATING_TIME VARCHAR2(1000),
+    HOLIDAY VARCHAR2(1000),
+    PARKING VARCHAR2(100),
+    TEL VARCHAR2(13) NOT NULL,
+    HOMEPAGE VARCHAR2(300),
+    INTRODUCE VARCHAR2(4000) NOT NULL,
+    CREATE_DATE DATE DEFAULT SYSDATE,
+    STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N'))
+);
+
+
+COMMENT ON COLUMN HOSPITAL_INFO.HOSP_NO IS '병원 식별번호';
+COMMENT ON COLUMN HOSPITAL_INFO.HOSP_ID IS '병원회원 아이디';
+COMMENT ON COLUMN HOSPITAL_INFO.HOSP_NAME IS '병원 이름';
+COMMENT ON COLUMN HOSPITAL_INFO.ADDRESS IS '병원 주소';
+COMMENT ON COLUMN HOSPITAL_INFO.ADDRESS_DETAIL IS '병원 상세 주소';
+COMMENT ON COLUMN HOSPITAL_INFO.Y_COORDINATE IS 'Y좌표';
+COMMENT ON COLUMN HOSPITAL_INFO.X_COORDINATE IS 'X좌표';
+COMMENT ON COLUMN HOSPITAL_INFO.OPERATING_TIME IS '운영시간';
+COMMENT ON COLUMN HOSPITAL_INFO.HOLIDAY IS '휴일';
+COMMENT ON COLUMN HOSPITAL_INFO.PARKING IS '주차여부';
+COMMENT ON COLUMN HOSPITAL_INFO.TEL IS '연락처';
+COMMENT ON COLUMN HOSPITAL_INFO.HOMEPAGE IS '홈페이지 주소';
+COMMENT ON COLUMN HOSPITAL_INFO.INTRODUCE IS '병원 소개';
+COMMENT ON COLUMN HOSPITAL_INFO.CREATE_DATE IS '등록일';
+COMMENT ON COLUMN HOSPITAL_INFO.STATUS IS '상태값(Y/N)';
+
+
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp01','청주지웰동물병원','충북 청주시 흥덕구 대농로 70','(복대동)',36.6415210763698,127.430097009602,'월, 화, 목, 금, 토, 일 : 10:00 ~ 22:00 / 수 : 14:00 ~ 22:00','연중무휴','불가','043-239-7575','https://blog.naver.com/gwellah','-',to_date('06/01/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp02','이승진동물병원','울산 남구 삼산로 94','(달동)',35.5345472764092,129.317869737733,'월 ~ 토 : 10:00 ~ 23:59 / 일 : 10:00 ~ 19:00 / 평일 야간 진료 : 19:00 ~ 24:00','연중무휴','가능','052-258-2516','https://blog.naver.com/vet7145','직원수 : 수의사 15명, 수의테크니션 21명',to_date('06/02/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp03','메이동물메디컬센터','전북 전주시 완산구 백제대로 218','(중화산동2가)',35.8123795376809,127.123614032487,'월 ~ 일 : 10:00 ~ 21:00','연중','가능','063-285-7975','http://www.mayanimal.com/','수의사 12명',to_date('06/03/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp04','(춘천)현대동물병원','강원 춘천시 춘천로 267','(후평동)',37.8800275751286,127.742968214907,'월 ~ 토 : 09:00 ~ 19:00 / 일 : 10:00 ~ 17:00','연중무휴','가능','033-256-7582','https://blog.naver.com/chhdac','수의사 8명, 테크니션 2명',to_date('06/04/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp05','꿈이크는동물병원','서울 송파구 백제고분로 115','그린빌딩 1층(잠실동)',37.5068715299487,127.079982607099,'월 ~ 금 : 10:00 ~ 20:00 / 토 : 10:00 ~ 19:00','매주 일요일','가능','02-420-7580','http://blog.naver.com/rokvet','영상/임상진단 중성화 슬개골탈구 스케일링 전문 / 강아지호텔 / 우수장비',to_date('06/05/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp06','(강남)그레이스동물병원','서울 강남구 학동로6길 18','1층 (논현동)',37.5106275585019,127.024159932926,'월 ~ 일 : 10:00~20:00','연중무휴','가능','02-3442-5554','http://blog.naver.com/byejoon22','고양이 행동/훈련 노령동물 전문 / 건강검진 고양이 전문 / TV출연 / 최신시설',to_date('06/06/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp07','서울대학교 수의과대학 동물병원','서울 관악구 관악로 1','(신림동, 서울대학교)',37.468038057989,126.959294337648,'월 ~ 금 : 09:00 ~ 15:00','매주 토요일, 일요일 및 공휴일','가능','02-880-8661','http://vmth.snu.ac.kr/index.do','모든 진료 1% 사전예약제',to_date('06/07/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp08','정든동물병원','제주특별자치도 서귀포시 신서로48번길 31','명성 클리닉 빌딩(강정동)',33.2535774663368,126.508636272298,'월 ~ 금 : 10:00 ~ 19:00 / 토 10:00 ~ 17:00','매주 일요일, 공휴일','가능','064-738-7975','https://blog.naver.com/jdah7975','-',to_date('06/08/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp09','조양래동물병원','부산 남구 수영로 224-1','(대연동)',35.1348475558723,129.091142121656,'월 ~ 일 : 10:00 ~ 19:00 / 야간 진료 : 19:00~07:00','연중무휴','가능','051-621-8880','https://blog.naver.com/animalcl','수의사 6명, 테크니션8명',to_date('06/09/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp10','(원주)누리동물병원','강원 원주시 서원대로 408','(단구동, 광장빌딩)',37.3299744446142,127.95002375138,'월~금 : 09:00 ~ 20:00 / 토 : 09:00 ~ 19:00','매주 일요일 휴무','가능','033-761-0167','https://blog.naver.com/nurihospital','수의사 6명, 테크니션 9명',to_date('06/10/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp11','애니펫동물병원','충남 천안시 동남구 터미널2로 8','(신부동)',36.8196329132767,127.158440492646,'월 ~ 토 : 10:00 ~ 21:00','매주 일요일','가능','041-523-0275',NULL,'-',to_date('06/11/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp12','하임동물의료센터','경기 김포시 양도로19번길 17','2층 201호(풍무동)',37.6083043970328,126.724302881112,'월 ~ 일 : 09:30 ~ 22:00','연중무휴','가능','031-985-1040','https://www.heim-amc.com/','수의사 2명',to_date('06/12/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp13','우리들동물메디컬센터','서울 양천구 목동로 161','(신정동)',37.5229138940392,126.864895802441,'월 ~ 일  : 00:00 ~ 23:59','연중무휴','가능','02-2642-7588','http://wooridleclinic.kr/main/index.php','-',to_date('06/13/2022', 'MM/DD/RRRR'),'Y');
+INSERT INTO HOSPITAL_INFO (HOSP_NO, HOSP_ID, HOSP_NAME, ADDRESS, ADDRESS_DETAIL, Y_COORDINATE, X_COORDINATE, OPERATING_TIME, HOLIDAY, PARKING, TEL, HOMEPAGE, INTRODUCE, CREATE_DATE, STATUS) 
+VALUES (SEQ_CNO.NEXTVAL,'hosp14','24시해든동물메디컬센터','경기 부천시 신흥로 190','위브더스테이트 1단지상가 2층 213-216호',37.501269771119,126.777250532846,'월 ~ 일 : 00:00 ~ 23:59 / 야간진료 21:00 ~ 09:00','연중무휴','가능','032-715-7579','https://blog.naver.com/prodigy_kr','노령동물전문, 영상/임상진단, 슬개골탈구, 입원실 3개, 수술실 2개, 재활실, 대형견 입원실, 2차병원',to_date('06/14/2022', 'MM/DD/RRRR'),'Y');
+
+
+--------------------------------------------------
+-------------  HOSPITAL_REVIEW 관련   --------------   
+--------------------------------------------------
+
+
+CREATE TABLE "HOSPITAL_REVIEW" (
+   "REVIEW_NO"   NUMBER PRIMARY KEY,
+   "HOSP_NO" NUMBER NOT NULL REFERENCES HOSPITAL_INFO(HOSP_NO) ON DELETE CASCADE,
+   "USER_ID" VARCHAR2(20) REFERENCES MEMBER(MEMBER_ID)  ON DELETE CASCADE,
+    "PET_NO" NUMBER,
+    "PET_KIND" VARCHAR2(9),
+   "PET_BREED"   VARCHAR2(50),
+   "PET_AGE" NUMBER,
+   "CLINIC_DATE" DATE NOT NULL,
+   "CLINIC_INFO" VARCHAR2(300),
+   "PRICE"   NUMBER,
+   "CONTENT" VARCHAR2(4000) NOT NULL,
+   "CREATE_DATE" DATE DEFAULT SYSDATE   NOT NULL,
+   "STATUS" VARCHAR2(1) DEFAULT 'Y' NOT NULL CHECK(STATUS IN ('Y', 'N'))
+);
+
+
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."REVIEW_NO" IS '리뷰 식별번호';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."HOSP_NO" IS '병원 식별번호';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."USER_ID" IS '아이디';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."PET_NO" IS '반려동물 식별번호';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."PET_KIND" IS '반려동물 종류(강아지/고양이/새/물고기/기타)';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."PET_BREED" IS '반려동물 품종';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."PET_AGE" IS '반려동물 나이(개월수)';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."CLINIC_DATE" IS '진료날짜';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."CLINIC_INFO" IS '진료정보';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."PRICE" IS '진료 가격';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."CONTENT" IS '리뷰 내용';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."CREATE_DATE" IS '작성일';
+COMMENT ON COLUMN "HOSPITAL_REVIEW"."STATUS" IS '상태(Y/N)';
+
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 14, 'user01', 25, '강아지', '비숑', TO_DATE('2022-06-01', 'YYYY-MM-DD'), '굿', TO_DATE('2022-06-01', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 13, 'user02', 26, '강아지', '시츄', TO_DATE('2022-06-02', 'YYYY-MM-DD'), '굿이에요', TO_DATE('2022-06-03', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 14, 'user03', 27, '강아지', '푸들', TO_DATE('2022-06-03', 'YYYY-MM-DD'), '짱이에요', TO_DATE('2022-06-06', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 13, 'user04', 28, '강아지', '말티즈', TO_DATE('2022-06-04', 'YYYY-MM-DD'), '정말 좋아요', TO_DATE('2022-06-04', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 14, 'user05', 29, '강아지', '프렌치불독', TO_DATE('2022-06-05', 'YYYY-MM-DD'), '완전 조아요', TO_DATE('2022-06-06', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 12, 'user01', 30, '고양이', '아비니시안',  TO_DATE('2022-06-06', 'YYYY-MM-DD'), '굿', TO_DATE('2022-06-07', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 11, 'user02', 31, '고양이', '아메리칸숏헤어', TO_DATE('2022-06-07', 'YYYY-MM-DD'), '굿이에요', TO_DATE('2022-06-07', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 12, 'user03', 32, '새', '모란앵무', TO_DATE('2022-06-08', 'YYYY-MM-DD'), '짱이에요', TO_DATE('2022-06-08', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 11, 'user04', 33, '물고기', '금붕어', TO_DATE('2022-06-09', 'YYYY-MM-DD'), '정말 좋아요', TO_DATE('2022-06-10', 'YYYY-MM-DD')); 
+INSERT INTO HOSPITAL_REVIEW(REVIEW_NO, HOSP_NO, USER_ID, PET_NO, PET_KIND, PET_BREED, CLINIC_DATE, CONTENT, CREATE_DATE)
+VALUES (SEQ_CNO.NEXTVAL, 12, 'user05', 34, '기타', '레오파드게코', TO_DATE('2022-06-10', 'YYYY-MM-DD'), '완전 조아요', TO_DATE('2022-06-12', 'YYYY-MM-DD')); 
+
+
+----------------------------------------------------
+--------------     ANIMAL 관련     ------------------   
+----------------------------------------------------
+
+CREATE TABLE "ANIMAL" (
+   "PET_NO" NUMBER PRIMARY KEY,
+   "PET_NAME" VARCHAR2(20) NOT NULL,
+   "PET_INPUTNO" VARCHAR2(50),
+   "PET_KIND" VARCHAR2(9) NOT NULL CHECK(PET_KIND IN ('강아지', '고양이', '새', '물고기', '기타')),
+   "PET_BREED"   VARCHAR2(50) NOT NULL,
+   "PET_BIRTH"   DATE DEFAULT SYSDATE,
+   "PET_NEUTRAL" VARCHAR2(1) DEFAULT 'N' CHECK(PET_NEUTRAL IN('Y', 'N')),
+   "CREATE_DATE" DATE DEFAULT SYSDATE,
+   "STATUS" VARCHAR2(1) DEFAULT 'Y' CHECK(STATUS IN('Y', 'N')) NOT NULL,
+   "PET_OWNER"   VARCHAR2(20) NOT NULL,
+   "COUNT" NUMBER,
+     FOREIGN KEY(PET_OWNER) REFERENCES MEMBER(MEMBER_ID) ON DELETE CASCADE
+);
+
+COMMENT ON COLUMN "ANIMAL"."PET_NO" IS '반려동물 식별번호';
+COMMENT ON COLUMN "ANIMAL"."PET_NAME" IS '반려동물 이름';
+COMMENT ON COLUMN "ANIMAL"."PET_INPUTNO" IS '반려동물 등록번호';
+COMMENT ON COLUMN "ANIMAL"."PET_KIND" IS '반려동물 종류';
+COMMENT ON COLUMN "ANIMAL"."PET_BREED" IS '반려동물 품종';
+COMMENT ON COLUMN "ANIMAL"."PET_BIRTH" IS '반려동물생년월일';
+COMMENT ON COLUMN "ANIMAL"."PET_NEUTRAL" IS '반려동물 중성화여부';
+COMMENT ON COLUMN "ANIMAL"."CREATE_DATE" IS '반려동물 등록일';
+COMMENT ON COLUMN "ANIMAL"."STATUS" IS '반려동물 상태';
+COMMENT ON COLUMN "ANIMAL"."PET_OWNER" IS 'USERID';
+
+
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '밍키', '강아지', '시츄', TO_DATE('2022-01-01', 'YYYY-MM-DD'), 'user02');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '초코', '강아지', '푸들', TO_DATE('2017-01-01', 'YYYY-MM-DD'), 'user03');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '말랑이', '강아지', '말티즈', TO_DATE('2012-01-01', 'YYYY-MM-DD'), 'user04');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '고구마', '강아지', '프렌치불독', TO_DATE('2012-01-01', 'YYYY-MM-DD'), 'user05');
+
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '덕배', '고양이', '아메리칸숏헤어', TO_DATE('2022-01-01', 'YYYY-MM-DD'), 'user02');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '앵돌이', '새', '모란앵무', TO_DATE('2017-01-01', 'YYYY-MM-DD'), 'user03');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '금쪽이', '물고기', '금붕어', TO_DATE('2012-01-01', 'YYYY-MM-DD'), 'user04');
+INSERT INTO ANIMAL(PET_NO, PET_NAME, PET_KIND, PET_BREED, PET_BIRTH, PET_OWNER)
+VALUES(SEQ_ANO.NEXTVAL, '용감이', '기타', '레오파드게코', TO_DATE('2012-01-01', 'YYYY-MM-DD'), 'user05');
+
+
+CREATE TABLE "DIARY" (
+   "DIARY_NO"   NUMBER      PRIMARY KEY,
+   "PET_WEIGHT"   NUMBER DEFAULT 0,
+   "PET_WALK"   NUMBER DEFAULT 0,
+   "PET_FOOD"   NUMBER DEFAULT 0,
+   "PET_PEE"   VARCHAR2(20)   DEFAULT '말랑말랑',
+   "PET_RECORD"   VARCHAR2(200)   DEFAULT '그 외의 기록',
+   "WRITE_DATE"   DATE   DEFAULT SYSDATE NOT NULL,
+   "STATUS"   VARCHAR2(1)   DEFAULT 'Y' CHECK(STATUS IN('Y', 'N')) NOT NULL,
+   "PET_NO"   NUMBER      NOT NULL,
+    FOREIGN KEY(PET_NO) REFERENCES ANIMAL(PET_NO) ON DELETE CASCADE
+);
+
+COMMENT ON COLUMN "DIARY"."DIARY_NO" IS '일기 등록번호';
+COMMENT ON COLUMN "DIARY"."PET_WEIGHT" IS '반려동물 몸무게';
+COMMENT ON COLUMN "DIARY"."PET_WALK" IS '반려동물 산책거리';
+COMMENT ON COLUMN "DIARY"."PET_FOOD" IS '반려동물 사료량';
+COMMENT ON COLUMN "DIARY"."PET_PEE" IS '반려동물 대소변상태';
+COMMENT ON COLUMN "DIARY"."PET_RECORD" IS '반려동물 그외의기록';
+COMMENT ON COLUMN "DIARY"."WRITE_DATE" IS '작성일';
+COMMENT ON COLUMN "DIARY"."STATUS" IS '상태';
+COMMENT ON COLUMN "DIARY"."PET_NO" IS '반려동물 식별번호';
+
+
+----------------------------------------------------
+--------------    COMMUNITY 관련     ----------------   
+----------------------------------------------------
+
+CREATE TABLE "COMMUNITY" (
+   "COMM_NO" NUMBER PRIMARY KEY,
+   "COMM_TITLE" VARCHAR2(100) NOT NULL,
+   "COMM_CONTENT" VARCHAR2(4000) NOT NULL,
+   "COMM_WRITER" VARCHAR2(100) NOT NULL,
+   "COMM_COUNT" NUMBER   DEFAULT 0,
+    "CATEGORY_NO" NUMBER,
+   "CREATE_DATE" DATE DEFAULT SYSDATE NOT NULL,
+   "STATUS" VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N'))
+);
+
+COMMENT ON COLUMN "COMMUNITY"."COMM_NO" IS '글번호';
+COMMENT ON COLUMN "COMMUNITY"."COMM_TITLE" IS '글제목';
+COMMENT ON COLUMN "COMMUNITY"."COMM_CONTENT" IS '글내용';
+COMMENT ON COLUMN "COMMUNITY"."COMM_WRITER" IS '글작성자';
+COMMENT ON COLUMN "COMMUNITY"."COMM_COUNT" IS '조회수';
+COMMENT ON COLUMN "COMMUNITY"."CATEGORY_NO" IS '카테고리 번호';
+COMMENT ON COLUMN "COMMUNITY"."CREATE_DATE" IS '작성일';
+COMMENT ON COLUMN "COMMUNITY"."STATUS" IS '상태';
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '안녕하세요~ 반갑습니다~!','잘부탁드려요~!!!', '사용자1', 56 , 50, '2021-03-04', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '잘부탁드려요~~~!!!','처음 가입했습니다 ㅎㅎ', '사용자1', 77 , 50, '2021-03-05', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '반가워요~ㅋㅋ 인사올립니다!','강아지2마리 키우는 사람이에요~ 모두 친하게 지내요~', '사용자2', 123 , 50, '2021-03-06', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 산책 친구 구합니다!!','제곧내 은평구에 사시는 분들은 댓글달아주세요!', '사용자4', 93 , 50, '2021-03-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '간식 추천좀요~!맛있는걸루 ㅎ','가성비 좋은걸로 부탁드려요 ㅎ', '사용자3', 88 , 50, '2021-03-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 주말에 뭐하시나요?','저는 가족들과 영화보러가기로 했어요!', '사용자2', 245 , 50, '2021-03-09', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들의 취미는 무엇인가요?','저는 책 읽는거랑 테니스가 취미입니다ㅎ', '사용자6', 236 , 50, '2021-03-21', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '점심 추천 부탁드림당!!!','한식중에서 뭐가 좋을까요?', '사용자5', 637 , 50, '2021-03-21', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '하이요~!!! 인사드립니다!ㅎㅎ','이렇게 여러 사람들과 소통 할 수 있는 기회가 있어서 넘 좋아요!', '사용자3', 521 , 50, '2021-03-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '배고파용 ㅠㅠ 밥 뭐먹졍???','다들 저녁은 뭐드시나용', '사용자6', 252 , 50, '2021-03-23', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '첫 가입인사드립니다!!','너무너무 반갑습니다ㅎ', '사용자2', 126 , 50, '2021-03-24', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '재밌는 영화 추천 부탁드려요^^','전 한국영화 좋아하는데 영화 추천 해주세욧!', '사용자3', 543 , 50, '2021-03-25', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이 간식 추천해주실분~~','츄르를 가장 좋아하지만 다른 간식 추천좀 해주세요!', '사용자3', 179 , 50, '2021-04-06', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '제 고민 좀 들어주세요 ㅠㅠㅠ','부모님께서 반려동물 키우는걸 반대하는데 어떻게 어필해야 될까요...', '사용자4', 37 , 50, '2021-04-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '간식 요즘 뭐가 좋나요???','가성비 좋은걸로 부탁드려요 ㅎ', '사용자3', 50 , 50, '2021-04-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '애니메이션 재밌는거 있을까요ㅎㅎ','요즘 뭐가 재밌나용?', '사용자5', 47 , 50, '2021-04-09', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '저녁 메뉴 추천해주실분~!~!','배가 많이 고파요~', '사용자1', 98 , 50, '2021-04-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '혹시 토끼 키우시는분 계신지요~?','저만 키우는건 아니겠죠?', '사용자6', 231 , 50, '2021-04-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '으..밥 뭐먹을까여?? 맛있는것 추천좀!','돈까쓰?', '사용자6', 121 , 50, '2021-04-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 키우는 반려동물 이름이 궁금해요 ㅋㅋ','제 반려견은 용감이에요!', '사용자2', 537 , 50, '2021-04-30', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '제 반려동물과 함께한지 벌써 1년이되었네요 ','시간이 참 너무너무 빠른것 같습니다ㅎ', '사용자1', 223 , 50, '2021-05-04', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들은 반려동물과 얼마나 함께 시간을 보내셨나요?','전 이제 5년째네요ㅎ', '사용자2', 117 , 50, '2021-05-05', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '배가 너모너모 고픕니다 밥 뭐먹을까염ㅎ','여러분들은 뭐 드셨어여?', '사용자3', 223 , 50, '2021-05-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '저는 어느덧 은퇴를 바라보고 있네요ㅎ','지금껏 정말 열심히 달려온것 같습니다ㅎㅎ 여러분들 모두 좋은 하루 되세요', '사용자3', 3 , 50, '2021-05-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '시간이 참 너무 빠른것 같아요ㅜㅜㅜ','아아 그리운 옛날이여~', '사용자5', 48 , 50, '2021-05-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 간식 추천해주실분~!!ㅎㅎ','비싸도 좋으니 맛있는걸루 추천해주세용!', '사용자2', 145 , 50, '2021-05-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '종로쪽에서 같이 산책하실 산책친구 구해용~','댓글 달아주심 감사하겠습니다~~', '사용자5', 237 , 50, '2021-05-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '경주 여행 다녀왔습니다 ㅎㅎㅎ(첨부)','가족들과 정말 좋은시간 보내고 왔어요!', '사용자4', 137 , 50, '2021-05-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들은 반려동물 몇마리 키우시나요?','전 강아지1마리 고양이2마리 키우고있어용', '사용자6', 437 , 50, '2021-05-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '저희 강아지가 새끼를 낳았어요!!!!','파일 첨부합니다 ㅎㅎㅎ', '사용자1', 35 , 50, '2021-05-29', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '요즘 날씨가 너무 덥지 않나요?ㅠㅠ','산책도 해야되는데 날이 너무더워서 나가기 싫어지네용', '사용자2', 23 , 50, '2021-06-04', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '반려동물 간식 이벤트 개최합니다!!!','댓글 달아주시는 분들 추첨 통해서 간식 보내드릴게요', '사용자3', 124 , 50, '2021-06-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '오늘은 간장계란밥을 만들어봤어요ㅎㅎ','여러분들은 뭐드셨나요??', '사용자4', 223 , 50, '2021-06-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들 최애 음식이 어떻게 되세요?','전 김치찌개가 최애입니다 ㅎ', '사용자4', 56 , 50, '2021-06-10', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '혹시 도마뱀 키우시는분들 계신가용?','키우시는 분 있는지 궁금합니다ㅎ', '사용자5', 511 , 50, '2021-06-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '오랜만에 가족들과 함께 외식하고 영화봤어요!','여러분들은 주말 어떻게 보내셨나요?', '사용자2', 245 , 50, '2021-06-23', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '저희집 뽀삐와 한강 산책 사진 첨부합니다!','여러분들도 산책 자주하시죠?', '사용자1', 201 , 50, '2021-06-25', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '간식 사이트 추천부탁드립니다 ^^','많은 댓글 기대할게요~!!', '사용자6', 158 , 50, '2021-06-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '부모님 생신선물 뭐가좋을까요??','으.. 뭐가 좋을지 모르겠어요!', '사용자3', 642 , 50, '2021-06-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '친구들과 함께 여행다녀왔습니다 ㅎ','어떻게 시간이 다 맞아서 제주도 여행 잘 다녀왔네요 ㅎ', '사용자4', 125 , 50, '2021-06-29', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '모두 식사는 하셨는지요?ㅎㅎㅎ','저는 김밥에 라면을 먹었어용 ㅎ', '사용자3', 213 , 50, '2021-07-01', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '점심 메뉴 추천받습니다~!!!!','맛있는걸루 많이 많이 추천해주세요!', '사용자1', 1124 , 50, '2021-07-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '안녕하세요! 가입인사드려용!','잘부탁드립니다^^', '사용자3', 113 , 50, '2021-07-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '집에서는 다들 뭐하고 노시나요?','전 하루종일 드라마봅니당ㅋㅋ', '사용자4', 99 , 50, '2021-07-10', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들의 최애라면은?','전 역시 신라면입니다 ㅎ', '사용자5', 314 , 50, '2021-07-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 옷 추천해주세요오~~','사이트 좋은 곳 있을까용?', '사용자6', 215 , 50, '2021-07-23', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '부산쪽에 산책로 좋은곳 추천받습니다!','많은 댓글 달아주세요~!!', '사용자1', 201 , 50, '2021-07-25', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '영어 능력자분 계신가요?ㅋㅋ','산책하다 외국인 봤는데 한마디도 못했어요 ㅠㅠ', '사용자4', 228 , 50, '2021-07-26', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 산책 코스 추천받습니당~','지역은 서울이구요 서대문구에 거주하고 있어요!', '사용자2', 742 , 50, '2021-07-27', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '지금 가장 생각나는 음식은??','전..곱창...', '사용자4', 235 , 50, '2021-07-29', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들은 심심할때 뭐하세용?','저는 걷는걸 좋아해서 저희 뽀삐랑 산책을 자주가요ㅎ', '사용자1', 113 , 50, '2022-06-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 음악 취향이 어떻게 되시나요?','전 잔잔한 발라드 좋아합니다 여러분들 의견이 궁금해욧!', '사용자1', 514 , 50, '2022-06-24', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '오늘 처음으로 가입하게 되었어요 모두 안녕하세용ㅎ', '모두모두 반가워요~! 친하게 지내용 ㅎ', '사용자3', 113 , 50, '2022-06-25', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '읽을만한 소설 책 추천 받을 수 있을까요?','저는 판타지 소설을 좋아해서 댓글 남겨주시면 감사하겠습니다 ㅎ', '사용자4', 129 , 50, '2022-06-26', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다이어트 93일차.. 쉽지 않군요.','점점 의지가 떨어집니다..제게 힘을 주세요..', '사용자5', 414 , 50, '2022-06-27', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지가 좋아하는 소리','유튜브에서 찾아서 실험해봤는데 아무 반응이 없어욬ㅋ', '사용자6', 221 , 50, '2022-06-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들은 좋아하는 유튜브 채널이 뭐에요?','저는 영국남자랑 곽튜브 즐겨봅니다ㅎ', '사용자1', 101 , 50, '2022-06-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '산책할때 듣기 좋은 음악!','추천해주심 감사하겠슴당!', '사용자4', 228 , 50, '2022-07-01', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '뉴비 인사드립니다','오늘 가입한 뉴비입니다 모두 환영해주세요', '사용자2', 742 , 50, '2022-07-02', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '산책친구구해요!','부산 서면쪽에 거주하시는 분은 댓글 남겨주시면 감사하겠습니다~~', '사용자4', 235 , 50, '2022-07-03', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 옷 관련해서 질문좀 드릴게요!','다들 옷 사실때 어디 사이트 이용하시나요?', '사용자1', 198 , 60, '2021-03-21', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여기다가 질문하면 되나요??!','다들 수제간식 사이트 이용해보셨나요?', '사용자2', 158 , 60, '2021-03-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '간식 원가가 궁금한데 혹시 정보아시는 분??','내용입니다8', '사용자3', 64 , 60, '2021-04-12', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '병원장님들 질문있습니다ㅠㅠ 도와주십시오.','내용입니다8', '사용자4', 48 , 60, '2021-04-18', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '산책시킬때 주의해야 될 점 뭐가있을까요?','내용입니다6', '사용자5', 282 , 60, '2021-04-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들은 고양이 사료 어떤 제품쓰세요?','내용입니다8', '사용자5', 197 , 60, '2021-04-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '혹시 집에 이구아나 키우시는분 있을까여?ㅎ','내용입니다8', '사용자1', 75 , 60, '2021-04-30', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 어디 지역에 거주하고 계신가용?','내용입니다6', '사용자3', 721 , 60, '2021-05-01', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 배변 훈련 질문있어요~~','내용입니다8', '사용자6', 134 , 60, '2021-05-02', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이 사료 질문 드립니다!!','내용입니다8', '사용자5', 231 , 60, '2021-05-11', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '질문은 여기다 올리는거 맞죠?','질문이 잘되나~', '사용자2', 238 , 60, '2021-05-21', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 반려동물 훈련 어떤식으로 하시나요?','꿀팁 좀 주세요~', '사용자3', 58 , 60, '2021-05-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '종로3가 근처 동물병원 질문드립니다','가격 저렴하고 제대로 진료하는 곳 추천좀 해주세요', '사용자5', 94 , 60, '2021-05-23', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이들 장난감으로 뭐가 좋을까요?','추천해주세요!', '사용자4', 98 , 60, '2021-05-24', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분은 반려동물 배식 어떤식으로 하시나요?','궁금합니다!', '사용자1', 202 , 60, '2021-05-26', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '동물병원 추천받을 수 있을까요?','저는 불광동쪽에 거주하고 있는데 정보 좀 주실분!', '사용자2', 334 , 60, '2021-05-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '배변훈련 질문드려요~~', '어떤 방식으로 해야 되는지 감이 안잡혀요..','사용자3', 214 , 60, '2021-05-30', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '원장님들 요즘 수요가 어떠신가요?','저 같은 경우 쉽지 않지만 그래도 열심히 하고 있습니다.', '사용자6', 141 , 60, '2021-06-01', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이들은 아예 산책을 할 필요가 없나요?','저희집 냥이는 개냥이라 항상 밖에 나가자고 졸라요..', '사용자2', 242 , 60, '2021-06-02', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '다들 반려동물 나이가 어떻게 되시나요?','저희집 고양이는 올해10살인데 아주 건강해요ㅎ', '사용자2', 152 , 60, '2021-06-04', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '선생님들 도움이 필요합니다','배변 훈련 교육할때 어떤식으로 해야 될까요?', '사용자1', 538 , 60, '2021-06-07', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지가 말을 안들을때','간식있을때만 말을 들어요 ㅠㅠ 어케해야 될까여', '사용자2', 158 , 60, '2021-06-08', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '병원비용 원래 이렇게 비싼가요...','진료하고 뭐하고 하는데 30만원 나왔어요 ㅠㅠ', '사용자6', 61 , 60, '2021-06-12', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '맜있는 간식 사이트 추천좀요!','보통 강아지들이 젤 좋아하는 간식이 뭔가여?', '사용자4', 62 , 60, '2021-06-13', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '목줄 질문드립니다','산책할때 줄 사이즈를 어느정도로 해야 딱 좋을까요?', '사용자3', 151 , 60, '2021-06-14', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '사료량 어느정도로 해야 될까요?','말티즈 키우고 있는데 어느정도가 적당한지 감이 잘 안와요..', '사용자1', 232 , 60, '2021-06-16', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들 반려동물 하루에 몇끼 주시나요?', '저는 아침 저녁주고 중간중간 간식을 주고 있어요 여러분들 의견이 궁금해요!','사용자2', 104 , 60, '2021-06-17', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '원장님들에게 질문있습니다!','가장 진상이었던 손님유형이 궁금해졌습니다 댓글 달아주세요!', '사용자3', 111 , 60, '2021-06-23', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '앉아 훈련법 질문드려요','간식을 줘도 앉아 훈련이 잘 안되는데 꿀팁 있나요?', '사용자5', 52 , 60, '2021-06-24', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '수제간식 사이트 질문!','가성비 좋고 유명한 곳 추천주실 수 있나여?', '사용자2', 112 , 60, '2021-06-26', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '포유류 키우시는분??','얼마나 많은 분들이 키우시는지 궁금해요!', '사용자2', 38 , 60, '2021-06-27', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '산책 몇시간씩 하시나요?','전 하루 1시간씩 2~3번 정도하는데 여러분들은 어때요?', '사용자3', 508 , 60, '2021-06-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지간식질문!','하루에 몇개씩 줘야하는지.. 정량을 알 수 있는법 있을까여?', '사용자4', 611 , 60, '2021-06-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이들은 평생 집에만 있어도 되나여?','저희집 냥이는 집안에서도 잘 노는데 원래 이러는게 맞는건가여?', '사용자5', 263 , 60, '2021-06-30', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '사료 배분 꿀팁주세요!','저희 강아지 식탐이 너무 많아서 많이 주는데 살이 너무 쪘어요.. 조삼모사해야될까요..ㅠ', '사용자6', 118 , 60, '2021-07-10', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '식탐견 도움필요해요','저희집 뚱이 진짜 귀여운데 식탐이 너무 강해요 ㅠㅠ 어떻게 해야 될까요?', '사용자1', 202 , 60, '2021-07-14', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 분양질문', '분양 받을 때 어느정도 비용이 가장 적절하다고 생각하시나요?','사용자3', 75 , 60, '2021-07-20', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '토끼 사료도 추천 받을 수 있을까요?','당근을 많이 주긴하는데 사료 정보도 좀 궁금해요', '사용자5', 110 , 60, '2021-07-22', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고슴도치 분양질문','저는 현재 강아지를 키우고 있는데 고슴도치에 관심이 생겼어요 분양시 꿀팁 좀 주세요!', '사용자4', 219 , 60, '2021-07-25', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '동물병원 진료비용에 대한 질문','보험적용이 안되다보니..가격 책정이 참 어렵습니다 ㅠ 동물병원 구별법 있을까요?', '사용자2', 314 , 60, '2021-07-29', 'Y' );
+
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지 나이 확인법','누군가가 버린 강아지를 저희집에서 키우고 있는데 나이가 궁금해요 확인 방법이 있을까요? ', '사용자3', 318 , 60, '2022-06-27', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '산책친구 질문','산책친구 구하셔서 같이 산책해보신분들 후기가 궁금해요!', '사용자5', 88 , 60, '2022-06-28', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '배식관련 질문드려요','저희집은 반려견에게 하루 3끼씩 챙겨주는데 여러분들도 보통 이런식으로 배식하시는 편인가요?', '사용자1', 61 , 60, '2022-06-29', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이의 심리가 궁금해요','참 오랫동안 함께 지냈지만 알다가도 모르겠어요 ㅋㅋ', '사용자4', 119 , 60, '2021-06-30', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '훈육 방법이 궁금해요!','간식을 너무 좋아해서 밥을 안먹으려고 하는데 좋은 방법 뭐 없을까요..??', '사용자2', 241 , 60, '2022-07-02', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '병원진료비용 책정 방법?','병원장님들에게 질문드립니다.. 솔직히 병원마다 가격이 너무 상이해서 판단이 잘 안서는데 기준이 있나요?', '사용자1', 337 , 60, '2022-07-03', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '수제간식 사이트 질문!', '간식 사이트 여러분들은 어디 애용하시나요..? ','사용자6', 105 , 60, '2021-08-21', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '강아지가 낑낑대는 이유..','몸이 아픈것 같지는 않은데 계속 절보고 낑낑거려요...산책가자는걸까요? 산책은 맨날 가는데 ㅠㅠ', '사용자4', 228 , 60, '2022-07-04', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '고양이와 강아지 같이 키우시는분 계실까요..?','저희 집은 애기때 부터 같이 키워서 그런지 사이가 좋은데 여러분들은 어떤편인가요..?', '사용자2', 607 , 60, '2022-07-05', 'Y' );
+INSERT INTO COMMUNITY VALUES(SEQ_CNO.NEXTVAL, '여러분들의 반려견들 이름이 궁금해요~!','저희 집 강아지는 이름이 감자예요 ㅋㅋ 여러분들 반려견 이름도 궁금해요!', '사용자2', 607 , 60, '2022-07-06', 'Y' );
+
+
+CREATE TABLE COATTACHMENT (
+  FILE_NO NUMBER PRIMARY KEY,
+  REF_CONO NUMBER NOT NULL,
+  ORIGIN_NAME VARCHAR2(255) NOT NULL,
+  CHANGE_NAME VARCHAR2(255) NOT NULL,
+  FILE_PATH VARCHAR2(1000) NOT NULL,
+  UPLOAD_DATE DATE DEFAULT SYSDATE NOT NULL,
+  FILE_LEVEL NUMBER,
+  STATUS VARCHAR2(1) DEFAULT 'Y' CHECK(STATUS IN('Y', 'N')),
+  FOREIGN KEY (REF_CONO) REFERENCES COMMUNITY(COMM_NO)
+);
+
+COMMENT ON COLUMN COATTACHMENT.FILE_NO IS '파일번호';
+COMMENT ON COLUMN COATTACHMENT.REF_CONO IS '참조게시글번호';
+COMMENT ON COLUMN COATTACHMENT.ORIGIN_NAME IS '파일원본명';
+COMMENT ON COLUMN COATTACHMENT.CHANGE_NAME IS '파일수정명';
+COMMENT ON COLUMN COATTACHMENT.FILE_PATH IS '저장폴더경로';
+COMMENT ON COLUMN COATTACHMENT.UPLOAD_DATE IS '업로드일';
+COMMENT ON COLUMN COATTACHMENT.FILE_LEVEL IS '파일레벨(1/2)';
+COMMENT ON COLUMN COATTACHMENT.STATUS IS '상태값(Y/N)';
+
+CREATE TABLE USERREPLY(
+  REPLY_NO NUMBER PRIMARY KEY,
+  REPLY_CONTENT VARCHAR2(400) NOT NULL,
+  REF_BNO NUMBER NOT NULL,
+  REPLY_WRITER VARCHAR2(20) NOT NULL,
+  CREATE_DATE DATE DEFAULT SYSDATE NOT NULL,
+  STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN ('Y', 'N')),
+  FOREIGN KEY (REF_BNO) REFERENCES COMMUNITY(COMM_NO)
+);
+
+COMMENT ON COLUMN USERREPLY.REPLY_NO IS '댓글번호';
+COMMENT ON COLUMN USERREPLY.REPLY_CONTENT IS '댓글내용';
+COMMENT ON COLUMN USERREPLY.REF_BNO IS '참조하는게시글번호';
+COMMENT ON COLUMN USERREPLY.REPLY_WRITER IS '작성자회원번호';
+COMMENT ON COLUMN USERREPLY.CREATE_DATE IS '작성일';
+COMMENT ON COLUMN USERREPLY.STATUS IS '상태값(Y/N)';
+
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '저요! 서면근처에서 거주하고 있어요! 카톡아이디 남길께요! lklk789 카톡주세용ㅎ', 84, 'user01', TO_DATE('2022-07-04 10:11:23', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '으..저는 서울에 거주하고 있어서 안될것 같네요 다음에 기회가 된다면 같이 산책해요!', 84, 'user02', TO_DATE('2022-07-05 09:27:55', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '보기 좋네요 ㅎㅎ 좋은 추억만드시길! ', 84, 'hosp02', TO_DATE('2022-07-04 12:35:52', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '저희집 강아지는 똘이에요!', 134, 'hosp01', TO_DATE('2022-07-07 08:12:25', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '반려견은 아니고 반려묘지만..ㅎㅎ 두부라고 해요!', 134, 'user03', TO_DATE('2022-07-07 09:35:16', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '저희집 강아지는 사랑이예요!', 134, 'user01', TO_DATE('2022-07-07 15:17:32', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+INSERT INTO USERREPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER, CREATE_DATE, STATUS)
+VALUES(SEQ_CRNO.NEXTVAL, '저희집은 초코입니당ㅋㅋ!', 134, 'user04', TO_DATE('2022-07-06 17:22:33', 'yyyy-mm-dd hh24:mi:ss'), DEFAULT);
+
+
+--------------------------------------------------
+--------------     NOTICE 관련   -------------------
+--------------------------------------------------
+
+CREATE TABLE NOTICE(
+      NOTICE_NO NUMBER PRIMARY KEY, --공지사항 번호
+      NOTICE_TITLE VARCHAR2(100) NOT NULL, --공지사항 제목
+      NOTICE_CONTENT VARCHAR2(4000) NOT NULL, --공지사항 내용
+      NOTICE_WRITER VARCHAR2(20) NOT NULL, --작성자 아이디
+      COUNT NUMBER DEFAULT 0, --조회수
+      CREATE_DATE DATE DEFAULT SYSDATE NOT NULL, --작성일
+      STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N')), --상태값
+      FOREIGN KEY(NOTICE_WRITER) REFERENCES MEMBER(MEMBER_ID) ON DELETE CASCADE
+);
+
+COMMENT ON COLUMN NOTICE.NOTICE_NO IS '공지사항번호';
+COMMENT ON COLUMN NOTICE.NOTICE_TITLE IS '공지사항제목';
+COMMENT ON COLUMN NOTICE.NOTICE_CONTENT IS '공지사항내용';
+COMMENT ON COLUMN NOTICE.NOTICE_WRITER IS '작성자 아이디';
+COMMENT ON COLUMN NOTICE.COUNT IS '조회수';
+COMMENT ON COLUMN NOTICE.CREATE_DATE IS '작성일';
+COMMENT ON COLUMN NOTICE.STATUS IS '상태값(Y/N)';
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(주)비스아이티', '회사명   (주)비스아이티
+모집 분야   자바 개발자
+연간채용예정인원   2~3
+채용예정월   즉시
+회사주소   서울시 금천구 가산디지털2로 165, 303호', 'admin', DEFAULT, '2022-02-11', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(주)비스아이티', '팀장/팀원   손**(팀장) : 마이페이지, 쪽지, 관심해제, 로그인, 회원가입, 회원탈퇴
+박** : 펀딩/스토어관리, 회원관리, 경고 쪽지, 판매자 승인, 쿠폰, 공지사항, 이벤트
+여** : 펀딩 CRUD 및 알림
+이** : 펀딩 CRUD 및 알림
+여** : 스토어 CRUD 및 결제
+한** : 스토어 CRUD 및 결제
+개요   크라우드 펀딩은 그 자체로서는 유용하지만, 일반 대중에게는 그 개념 자체가 생소하게 다가오기때문에,
+크라우드 펀딩서비스의 진입장벽을 낮추고, 누구나 편하게 사용할수있는 기회의 장을 제공하는 사이트 개발
+구현기능   1. 펀딩기능
+- 등록/리스트 및 상세보기/리뷰/신고/결제/알림
+2. 스토어기능
+- 등록/리스트 및 상세보기/리뷰/신고/결제/반품/교환
+3. 관리자 기능
+- 프로젝트/상품/회원 리스트관리
+- 프로젝트/상품 신고 및 블랙리스트 관리
+- Q_A 채팅관리
+4. 회원기능
+- 쪽지/로그인/회원가입/회원탈퇴/쿠폰/마이페이지/매출/통계
+설계의 주안점   - 소비자가 펀딩에 참여하고 의견을 공유
+- 키워드 입력을통해 원하는 상품을 검색
+- 펀딩이 끝난 상품의 구매기능 및 일반제품 판매
+- 후기를 통한 관리 및 차단기능
+사용기술 및
+개발환경   JAVA, ORACLE, HTML, CSS, JavaScript, jQuery, Ajax, Apache-Tomcat, Spring, Mybatis, GitHub, Maven', 'admin', DEFAULT, '2022-02-13', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(디지털컨버전스)자바(JAVA)기반 공공데이터 융합 개발자 양성과정A)', '"회사명   (주)비스아이티
+모집 분야   자바 개발자
+연간채용예정인원   2~3
+채용예정월   즉시
+회사주소   서울시 금천구 가산디지털2로 165, 303호"', 'admin', DEFAULT, '2022-02-11', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(디지털컨버전스)자바(JAVA)기반 공공데이터 융합 개발자 양성과정A)', '과정명 : (디지털컨버전스)자바(JAVA)기반 공공데이터 융합 개발자 양성과정A
+강사 : 김동현 선생님
+날짜 : 2022.07.11
+시간 : 10:00 ~ 11:00
+강의실 : KH정보교육원 강남지원 2관 M강의실
+취업담임 :  김효정
+ 
+
+KH정보교육원 취업 특강 안내입니다.
+ 
+취업특강은 현장업무에 대한 궁금점을 해소하고, 취업준비에 관하여 많은 정보를 얻을 수 있는 자리입니다
+ 
+많은 관심 부탁 드립니다. ', 'admin', DEFAULT, '2022-02-15', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(디지털컨버전스)Springframework _ 클라우드 융합 웹 개발자 양성과정(1)', '과정명 : (디지털컨버전스)Springframework _ 클라우드 융합 웹 개발자 양성과정(1)(종로지원)
+강사 : 임정훈
+날짜 : 2022.07.07
+시간 : 09:00 ~ 18:00
+강의실 : KH정보교육원 종로지원 D강의실
+ 
+KH정보교육원 프로젝트 발표 안내입니다.
+ 
+프로젝트 발표회는 학생들이 공부했던 내용을 기반으로 기획하고 개발한 프로젝트를 시현하고 질의 · 응답을 통해 정보를 나누는 자리입니다.
+ 
+프로젝트 발표회에는 KH정보교육원에서 공부하고 있는 학생이면 누구나 참관할 수 있으니 많은 관심 바랍니다.', 'admin', DEFAULT, '2022-02-17', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(디지털컨버전스) 클라우드 컴퓨팅 웹 융합 응용SW엔지니어 양성 과정B', '과정명 : (디지털컨버전스) 클라우드 컴퓨팅 웹 융합 응용SW엔지니어 양성 과정B
+강사 : 김은주
+날짜 : 2022.07.06 ~ 2022.07.12
+장소 : ZOOM 활용
+취업담임 :  윤수빈
+ 
+KH정보교육원 취업클리닉 안내입니다.
+ 
+해당 과정의 반 학생을 대상으로 취업담임이 진행하는 취업클리닉이 실시 될 예정입니다.
+취업클리닉을 통하여 취업에 대한 많은 도움을 얻기 바랍니다.
+', 'admin', DEFAULT, '2022-02-19', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '직무설명회 영상시청_설문조사 작성안내', '안녕하세요.
+KH취업담임입니다.
+직무설명회영상 시청에 대해 안내드립니다.
+
+<직무설명회 영상시청안내>
+
+1. 시청방법
+- KH홈페이지 로그인 > 마이페이지 > 학습동영상 > 직무설명회 영상
+
+2. 시청기간
+- 07월 04일(월)~07월 17일(일)
+* 해당기간 내에만 시청가능하며, 이후 시청 불가합니다.
+
+3. 설문조사 작성
+- 해당 영상을 시청 후 설문조사 작성 해 주시면 됩니다.
+- KH홈페이지 로그인 > 마이페이지> 취업설문조사 2차> 제출누르기
+  (개강OT때 했던 방법과 동일)
+
+ 
+※ 설문조사 참여 꼭 해주세요!!', 'admin', DEFAULT, '2022-02-21', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '2차 취업특강 안내', '과정명 : (디지털컨버전스)자바(JAVA)기반 공공데이터 융합 개발자 양성과정A
+강사 : 최선영
+날짜 : 2022.07.12
+시간 : 13:30 ~ 14:10
+강의실 : KH정보교육원 지원 관 강의실
+취업담임 :  이소연
+ 
+
+KH정보교육원 2차 취업 특강 안내입니다.
+ 
+
+1차 취업특강이 끝나고 2차 취업특강이 진행 될 예정입니다!
+
+ 
+취업특강은 현장업무에 대한 궁금점을 해소하고, 취업준비에 관하여 많은 정보를 얻을 수 있는 자리이며 
+
+자기소개에 작성되지 않은 부분들에 대해 소개해드리고 작성하는 시기입니다
+ 
+특강 날짜 꼭 기억하셔서 잘 들어주시기 바랍니다.
+
+ 
+
+감사합니다.', 'admin', DEFAULT, '2022-02-23', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(정보시스템구축) 보안엔지니어링 기반 정보보안 전문가 양성과정(1)', '과정명 : (정보시스템구축) 보안엔지니어링 기반 정보보안 전문가 양성과정
+강사 : 이태호 선생님
+날짜 : 2022.06.07
+시간 : 17:00 ~ 21:50
+강의실 : KH정보교육원 강남지원 2관 O강의실
+ 
+KH정보교육원 프로젝트 발표 안내입니다.
+ 
+프로젝트 발표회는 학생들이 공부했던 내용을 기반으로 기획하고 개발한 프로젝트를 시현하고 질의 · 응답을 통해 정보를 나누는 자리입니다.
+ 
+프로젝트 발표회에는 KH정보교육원에서 공부하고 있는 학생이면 누구나 참관할 수 있으니 많은 관심 바랍니다.', 'admin', DEFAULT, '2022-02-25', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(스마트웹_콘텐츠개발)반응형 UI/UX 웹콘텐츠 개발자 양성과정A 개강OT', '
+과정명 : (스마트웹_콘텐츠개발)반응형 UI/UX 웹콘텐츠 개발자 양성과정A
+강사 : 김영직 선생님
+교육기간 : 2022.05.30 ~ 2023.01.13
+강의시간 : 15:30 ~ 22:00
+강의실 : KH정보교육원 강남지원 3관 352강의실
+ 
+KH정보교육원 개강OT 안내입니다.
+ 
+개강 당일은 취업지원 및 학원생활에 대한 OT가 진행 됩니다.
+OT를 통해 교육 일정 및 취업지원에 대한 안내를 받게 될 예정이오니 학생 여러분들은 수업시간에 늦지 않게 참석하시기 바랍니다.
+ 
+여러분의 새로운 시작을 축하합니다!
+', 'admin', DEFAULT, '2022-03-11', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(정보시스템구축)정보시스템 구축·운영 기반 정보보안 전문가', '과정명 : (정보시스템구축)정보시스템 구축·운영 기반 정보보안 전문가 양성과정A
+강사 : 고승욱 선생님
+교육기간 : 2022. 05. 25 ~ 2022. 12. 27
+강의시간 : 09:00 ~ 15:30
+강의실 : KH정보교육원 강남지원 1관 U강의실
+ 
+KH정보교육원 개강OT 안내입니다.
+ 
+개강 당일은 취업지원 및 학원생활에 대한 OT가 진행 됩니다.
+OT를 통해 교육 일정 및 취업지원에 대한 안내를 받게 될 예정이오니 학생 여러분들은 수업시간에 늦지 않게 참석하시기 바랍니다.
+ 
+여러분의 새로운 시작을 축하합니다!', 'admin', DEFAULT, '2022-03-15', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(스마트웹_콘텐츠개발) 반응형 UI/UX 웹콘텐츠 개발자 양성과정 수료식', '과정명 : (스마트웹_콘텐츠개발) 반응형 UI/UX 웹콘텐츠 개발자 양성과정
+강사 : 박용준
+날짜 : 2022.05.23
+시간 : 14:00
+강의실 : KH정보교육원 지원 2관 352강의실
+ 
+KH정보교육원 프로젝트 발표 안내입니다.
+ 
+프로젝트 발표회는 학생들이 공부했던 내용을 기반으로 기획하고 개발한 프로젝트를 시현하고 질의 · 응답을 통해 정보를 나누는 자리입니다.
+ 
+프로젝트 발표회에는 KH정보교육원에서 공부하고 있는 학생이면 누구나 참관할 수 있으니 많은 관심 바랍니다.', 'admin', DEFAULT, '2022-03-16', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(클라우드 운영 관리) 클라우드 컴퓨팅 엔지니어 양성 과정 3회차', '과정명 : (클라우드 운영 관리) 클라우드 컴퓨팅 엔지니어 양성 과정
+강사 : 김영재
+교육기간 : 2022.05.23 ~ 2023.01.19
+강의시간 : 09:00 ~ 15:30
+강의실 : KH정보교육원 종로지원 B강의실
+ 
+KH정보교육원 개강OT 안내입니다.
+ 
+개강 당일은 취업지원 및 학원생활에 대한 OT가 진행 됩니다.
+OT를 통해 교육 일정 및 취업지원에 대한 안내를 받게 될 예정이오니 학생 여러분들은 수업시간에 늦지 않게 참석하시기 바랍니다.
+ 
+여러분의 새로운 시작을 축하합니다!
+', 'admin', DEFAULT, '2022-03-19', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(정보시스템구축) 정보시스템 구축·운영 기반', '과정명 : (정보시스템구축) 정보시스템 구축·운영 기반 정보보안 전문가 양성과정
+강사 : 고승욱
+날짜 : 2022.05.20
+시간 : 10:00 ~ 14:00
+강의실 : KH정보교육원 지원 1관 U강의실
+ 
+KH정보교육원 프로젝트 발표 안내입니다.
+ 
+프로젝트 발표회는 학생들이 공부했던 내용을 기반으로 기획하고 개발한 프로젝트를 시현하고 질의 · 응답을 통해 정보를 나누는 자리입니다.
+ 
+프로젝트 발표회에는 KH정보교육원에서 공부하고 있는 학생이면 누구나 참관할 수 있으니 많은 관심 바랍니다.', 'admin', DEFAULT, '2022-04-03', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(빅데이터 전문가)빅데이터 플랫폼을 활용한 개발자 양성과정A1', '과정명 : (빅데이터 전문가)빅데이터 플랫폼을 활용한 개발자 양성과정A
+강사 : 김재우 선생님
+교육기간 : 2022.05.16 ~ 2022.12.20
+강의시간 : 15:30 ~ 22:00
+강의실 : KH정보교육원 지원 관 강의실
+ 
+KH정보교육원 개강OT 안내입니다.
+ 
+개강 당일은 취업지원 및 학원생활에 대한 OT가 진행 됩니다.
+OT를 통해 교육 일정 및 취업지원에 대한 안내를 받게 될 예정이오니 학생 여러분들은 수업시간에 늦지 않게 참석하시기 바랍니다.
+ 
+여러분의 새로운 시작을 축하합니다!
+', 'admin', DEFAULT, '2022-04-10', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '(정보시스템구축)보안엔지니어링 기반 정보보안 전문가 양성과정A2', '
+과정명 : (정보시스템구축)보안엔지니어링 기반 정보보안 전문가 양성과정A2_1회차
+강사 : 이정수
+교육기간 : 2022.05.12 ~ 2022.12.06
+강의시간 : 09:00 ~ 15:30
+강의실 : KH정보교육원 강남지원 3관 362강의실
+ 
+KH정보교육원 개강OT 안내입니다.
+ 
+개강 당일은 취업지원 및 학원생활에 대한 OT가 진행 됩니다.
+OT를 통해 교육 일정 및 취업지원에 대한 안내를 받게 될 예정이오니 학생 여러분들은 수업시간에 늦지 않게 참석하시기 바랍니다.
+ 
+여러분의 새로운 시작을 축하합니다!
+
+', 'admin', DEFAULT, '2022-04-13', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '프로젝트 완료 보고서 작성 순서', '① 시스템의 개요
+- 계획서 상의 개요 부분을 발췌하여 작성 및 새고 구현된 기능이 있다면 추가
+- 구현에 사용된 도구나 적용된 기술들을 모두 기재
+② 시스템 구성
+- 계획서 상의 시스템 구성 중 실제로 구현된 부분만 작성
+- 계획서 상의 시스템 구성과 달라진 부분이 있는 경우 추가
+- 모든 그림에는 그림번호 및 그림제목을 붙인다.
+ (예: 그림 2-1 시스템 메뉴 구성도)
+', 'admin', DEFAULT, '2022-04-16', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '③ 시스템 흐름', '- 계획서 상의 시스템 흐름도 중 실제로 구현된 부분만 작성
+- 계획서 상의 시스템 흐름도와 달라진 부분이 있는 경우 추가
+- 모든 그림에는 그림번호 및 그림제목을 붙인다.
+ (예: 그림 3-1 시스템 구성도)', 'admin', DEFAULT, '2022-04-20', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '④ 시스템 운용자 지침', '- 시스템을 어떻게 사용해야 하는지를 작성한다. - 실제 화면을 캡처해서 해당 화면을 어떻게 동작해야 하는지를 상세히 작성한다. 즉, 처음 시스템을 사용하는 사용자의 입장에서 모든 기능의 사용방법을 작성한다. - 모든 그림에는 그림번호 및 그림제목을 붙인다.
+ (예: 그림 4-1 로그인 화면)
+', 'admin', DEFAULT, '2022-04-21', DEFAULT);
+
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '⑤ DB 구성도', '- 계획서 상의 DB 설계 중 실제로 구현된 DB의 구성을 작성
+- 계획서 상의 DB 설계와 달라진 부분이 있는 경우 추가', 'admin', DEFAULT, '2022-05-01', DEFAULT);
+
+INSERT INTO NOTICE
+VALUES (SEQ_NNO.NEXTVAL, '   수의사법 수술등중대진료에 대한 설명', '1. 「수의사법」법률 제18691호 및 「수의사법 시행령」,「수의사법 시행규칙」과 관련합니다.   
+
+2. 지난 ‘22.1.4. 일부개정된 「수의사법」(법률 제18691호)의 시행일인 6개월이 경과함에 따라, 
+다가오는 ‘22.7.5.(화)부터 수의사는 “수술등중대진료”를 하는 경우 「수의사법」제13조의2(수술등중대진료에 관한 설명)에 따라 
+동물소유자 등에게 다음의 내용을 설명하고, 서면(전자문서 포함)으로 동의를 받아야 합니다.       
+
+ 가. 동물에게 발생하거나 발생 가능한 증상의 진단명       
+ 나. “수술등중대진료”의 필요성, 방법 및 내용       
+ 다. “수술등중대진료”에 따라 전형적으로 발생이 예상되는 후유증 또는 부작용       
+ 라. “수술등중대진료” 전후에 동물소유자 등이 준수하여야 할 사항
+
+            ◈수술등중대진료의 범위(「수의사법 시행규칙」제13조의2)
+               1. 전신마취를 동반하는 내부장기, 뼈, 관절에 대한 수술
+               2. 전신마취를 동반하는 수혈
+
+
+3. 법에 따라 내용을 설명할 때에는 구두로 하고, 동의를 받을 때는 「수의사법 시행규칙」별지 제11호 서식의 동의서에 
+동물소유자등의 서명이나 기명날인을 받은후 1년간 보존해야 합니다. 
+(※ 별지11호 동의서 서식의 내용은 필수 항목으로 동 내용을 모두 포함한 별도의 동의서 양식 사용 가능하며, 차주 대한수의사회 권고 서식 안내 예정)     
+
+
+4. 다만, 설명 및 동의 절차로 “수술등중대진료”가 지체되면 동물의 생명이 위험해지거나 동물의 신체에 중대한 장애를 가져올 우려가 있는 경우에는 
+“수술등중대진료”이후에 설명하고 동의를 받을 수 있습니다.     
+
+
+5. 법 시행 이후 동물소유자 등에게 설명을 하지 아니하거나 서면으로 동의를 받지 아니한 경우 
+과태료(1차 30만원/2차 60만원/3차 90만원)가 부과될 수 있으므로, 수의사 회원들의 각별한 주의가 필요합니다. 
+
+--------------------------------------------------------------------------------------------------------
+대한수의사회에서 보내온 수의사법 시행관련 Q_A, 자세한안내공문 1부와 수술등 중대진료 동의서 법정 서식 및 작성예시 각 1부를 파일로 첨부해놓습니다. 
+회원분들께서는 각별히 유의하시어 불이익을 받지 않도록 주의해주시기 바랍니다. 
+감사합니다. ', 'admin', DEFAULT, '2022-06-11', DEFAULT);
+
+
+
+
+CREATE TABLE NOTICECOMMENT(
+    CMT_NO NUMBER PRIMARY KEY, --댓글 번호 REFERENCES COMMENTS.COMMENT_NO
+    CMT_WRITER VARCHAR2(100) NOT NULL, --댓글 작성자
+    CMT_CONTENT VARCHAR2 (4000) NOT NULL, --댓글 내용
+    REF_NNO NUMBER NOT NULL,
+    CREATE_DATE DATE DEFAULT SYSDATE NOT NULL, --작성일
+    STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN('Y', 'N')), --상태값
+    FOREIGN KEY(REF_NNO) REFERENCES NOTICE(NOTICE_NO)--공지사항 번호 참조
+);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'admin', '바뀐 법령이 우리 아가한테 어떤 영향을 줄까요?', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'hosp01', '"안녕하세요! 지웰 동물병원입니다!
+바뀐 법에 맞춰 최선을 다하겠습니다!"', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'user01', '오 지웰 동물병원이네요! 저 여기서 강아지 수술 받았는데 아가 수술도 잘됐고 선생님이 장군처럼 잘 생기셨어요!', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'user02', '아하! 저기가 그 유명한 지웰이군여! 저도 함 가봐야겠어여!', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'hosp01', '저 여자입니다;;', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'hosp01', '정보시스템 구축·운영 기반 정보보안 전문가 양성과정A 정말 기대돼요!', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'user01', '핫!.. 죄송해요!!!!!!', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'user02', '두둥두둥 지웰 쌤! 저 조만간 저희 고양이랑 방문할게요!', '19', '2022-07-06', DEFAULT);
+
+INSERT INTO NOTICECOMMENT
+VALUES (SEQ_NOCMT.NEXTVAL, 'hosp01', '넵! ㅎㅎ 오시면 시원한 차 드릴게요!', '19', '2022-07-06', DEFAULT);
+
+
+
+
+--------------------------------------------------
+--------------     INQUIRY 관련   -----------------
+--------------------------------------------------
+
+CREATE TABLE "CATEGORY" (
+    CATEGORY_NO NUMBER PRIMARY KEY,
+   "CATEGORY_NAME"   VARCHAR2(30)   NOT NULL
+);
+
+COMMENT ON COLUMN "CATEGORY"."CATEGORY_NO" IS '카테고리번호';
+COMMENT ON COLUMN "CATEGORY"."CATEGORY_NAME" IS '카테고리명';
+
+INSERT INTO CATEGORY VALUES(10, '신고문의');
+INSERT INTO CATEGORY VALUES(20, '계정문의');
+INSERT INTO CATEGORY VALUES(30, '오류문의');
+INSERT INTO CATEGORY VALUES(40, '기타문의');
+INSERT INTO CATEGORY VALUES(50, '와글와글게시판');
+INSERT INTO CATEGORY VALUES(60, '질문게시판');
+
+
+CREATE TABLE "INQUIRY" (
+   "INQUIRY_NO"   NUMBER PRIMARY KEY,
+   "CATEGORY_NO"   NUMBER   NOT NULL,
+   "USER_ID"   VARCHAR2(20)   NOT NULL,
+    INQUIRY_TITLE VARCHAR2(1000) NOT NULL,
+   "INQUIRY_CONTENT"   VARCHAR2(4000)   NOT NULL,
+   "CREATE_DATE"   DATE DEFAULT SYSDATE NOT NULL,
+   STATUS VARCHAR2(1) DEFAULT 'O' CHECK (STATUS IN('O', 'X')),
+   CHECKSTATUS VARCHAR(100) DEFAULT '답변미완료' CHECK(CHECKSTATUS IN('답변완료','답변미완료')),
+    FOREIGN KEY (CATEGORY_NO) REFERENCES CATEGORY(CATEGORY_NO)
+);
+
+COMMENT ON COLUMN "INQUIRY"."INQUIRY_NO" IS '문의번호';
+COMMENT ON COLUMN "INQUIRY"."CATEGORY_NO" IS '카테고리번호';
+COMMENT ON COLUMN "INQUIRY"."USER_ID" IS '아이디';
+COMMENT ON COLUMN INQUIRY.INQUIRY_TITLE IS '문의제목';
+COMMENT ON COLUMN "INQUIRY"."INQUIRY_CONTENT" IS '문의내용';
+COMMENT ON COLUMN "INQUIRY"."CREATE_DATE" IS '작성일';
+COMMENT ON COLUMN "INQUIRY"."STATUS" IS '처리된상태:O/처리안된상태:X';
+
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user01', '커뮤니티에서 병원홍보해도 되는거였나여?', '제목 그대로입니다. 와글와글 커뮤니티에서 병원홍보를 하시는 분이 있는데 관리좀 해주세요','2022-02-18','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user02', '와글와글에서 병원 홍보', '와글와글에서 병원 홍보를 하시는 분에 계세요... 아이디는 user07이였습니다','2022-02-20','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user03', '커뮤니티에 이상한 글', '커뮤니티에 이상한 글이 있는데 확인해보고 삭제해주실수 있나요?','2022-02-24','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user04', '회원관리 좀 제대로 해주세요', '관리자분은 뭐하시길래 커뮤니티에 욕으로 도배가 되어있는데 확인 안해보시나요? 조치를 취해주시죠','2022-02-26','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user05', '아이디 변경 가능?', '아이디 변경 가능 한가요?','2022-03-01','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user06', '개명했는데', '개명했는데 내 정보수정에서 이름도 바꿀수있나요?','2022-03-2','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 30, 'user07', '병원 페이지에서', '404를 뜨는데 문제있는건가요?','2022-03-5','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 30, 'user08', '페이지가 이동되기 전', '페이지가 이동되기전에 로그아웃이 되는거 같아요','2022-03-8','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 40, 'user01', '페이지이동 속도', '혹시 페이지 이동이 버벅거리는데 왜 그러는 건가요?','2022-03-11','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 40, 'user02', '다른 기능 추가', '친분이 생긴 회원들끼리 채팅하고 싶은데 나중에 기능을 만들어 주실수 있나요?','2022-03-12','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user01', '같은 이메일로 ', '같은 이메일로 회원가입이 가능한가요?','2022-03-15','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'hosp01', '병원사업자', '병원사업자등록번호도 바꿀수 있나요?','2022-03-15','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'hosp04', '악의적인 리뷰', '악의적인 리뷰가 있습니다. 죄송하지만 지워주실수 있나요?','2022-03-16','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user04', '병원이 홍보하네여', '병원과 관련된 분인거 같은데 홍보하시는 분이 계시네요','2022-03-18','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user01', '병원측에서 과잉진료', '과잉진료를 하는 병원은 차단안되나여? 진짜 급하게 가서 다른 병원으로는 못갔는데 너무 비싸네요','2022-04-18','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user02', 'user07이 제가 있는', 'user07이 제가 있는 게시글마다 다 욕설을 남기고 가네요','2022-04-20','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user03', 'user07은 뭐하는 사람인가요', 'user07이 거의 모든 게시글마다 욕설을 남기는 유저인거같은데 차단 해주세요...','2022-04-24','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'user04', 'user07 이사람은', 'user07이 사람은 무슨 병원홍도도 하고 커뮤니티에서 욕설을 남기고 악질유저같은데 영구차단은 못하시나요?','2022-04-26','O','답변미완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user05', '회원탈퇴 했었는데', '회원탈퇴를 하기전에 있던 정보들을 다시 불러오기가 가능할까요?','2022-04-30','O','답변미완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user06', '회원복구 가능', '회원탈퇴했는데 복구가 가능한가요?','2022-05-2','O','답변미완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 40, 'user06', '지금은 존재하지 않는', '지금은 존재하지 않는 병원이 동물병원에서 뜨는거 같아요','2022-06-12','O','답변미완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'user07', '이름말고 닉네임', '이름말고 닉네임으로 수정가능 한거죠?','2022-06-15','O','답변미완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 20, 'hosp08', '병원두개를..', '병원두개를 다른 아이디로 관리하고 있었는데 하나로 통합이 가능할까요?','2022-06-15','O','답변완료');
+INSERT INTO INQUIRY VALUES(SEQ_INO.NEXTVAL, 10, 'hosp02', '악질회원이 리뷰를 이상하게 쓰네요', '악의적인 리뷰가 있는데 삭제해주실수있나요?','2022-06-16','O','답변미완료');
+
+
+
+----------------------------------------------------
+--------------     ATTACHMENT 관련     --------------   
+----------------------------------------------------
+
+DROP TABLE ATTACHMENT CASCADE CONSTRAINTS;
+
+CREATE TABLE ATTACHMENT (
+  FILE_NO NUMBER PRIMARY KEY,
+  REF_CNO NUMBER NOT NULL,
+  ORIGIN_NAME VARCHAR2(255) NOT NULL,
+  CHANGE_NAME VARCHAR2(255) NOT NULL,
+  FILE_PATH VARCHAR2(1000) NOT NULL,
+  UPLOAD_DATE DATE DEFAULT SYSDATE NOT NULL,
+  FILE_LEVEL NUMBER,
+  STATUS VARCHAR2(1) DEFAULT 'Y' CHECK(STATUS IN('Y', 'N'))
+);
+
+COMMENT ON COLUMN ATTACHMENT.FILE_NO IS '파일번호';
+COMMENT ON COLUMN ATTACHMENT.REF_CNO IS '참조게시글번호';
+COMMENT ON COLUMN ATTACHMENT.ORIGIN_NAME IS '파일원본명';
+COMMENT ON COLUMN ATTACHMENT.CHANGE_NAME IS '파일수정명';
+COMMENT ON COLUMN ATTACHMENT.FILE_PATH IS '저장폴더경로';
+COMMENT ON COLUMN ATTACHMENT.UPLOAD_DATE IS '업로드일';
+COMMENT ON COLUMN ATTACHMENT.FILE_LEVEL IS '파일레벨(1/2)';
+COMMENT ON COLUMN ATTACHMENT.STATUS IS '상태값(Y/N)';
+
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 1, '01_청주지웰동물병원.jpg', 'Petist_20220629174515_25444.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 2, '02_이승진동물병원.jpg', 'Petist_20220629175758_10979.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 3, '03_메이동물메디컬센터.jpg', 'Petist_20220629175903_49643.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 4, '04_(춘천)현대동물병원.jpg', 'Petist_20220629180017_94778.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 5, '05_꿈이크는동물병원.jpg', 'Petist_20220629180104_40450.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 6, '06_그레이스동물병원.jpg', 'Petist_20220629180155_78761.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 7, '07_서울대학교 수의과대학 동물병원.jpg', 'Petist_20220629180256_79026.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 8, '08_정든동물병원.jpg', 'Petist_20220629180405_42324.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 9, '09_조양래동물병원.jpg', 'Petist_20220629180454_89149.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 10, '10_원주 누리동물병원.jpg', 'Petist_20220629180554_37941.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 11, '11_애니펫동물병원.jpg', 'Petist_20220629180619_46406.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 12, '12_하임동물의료센터.jpg', 'Petist_20220629180747_41701.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 13, '13_우리들동물메디컬센터.jpg', 'Petist_20220629180836_28718.jpg', 'resources/hospital_upfiles/');
+INSERT INTO ATTACHMENT(FILE_NO, REF_CNO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+VALUES(SEQ_FNO.NEXTVAL, 14, '14_24시해든동물메디컬센터.jpg', 'Petist_20220629180928_56172.jpg', 'resources/hospital_upfiles/');
+
+----------------------------------------------------
+----------------     REPLY 관련     -----------------   
+----------------------------------------------------
+
+CREATE TABLE INREPLY(
+  REPLY_NO NUMBER PRIMARY KEY,
+  REPLY_CONTENT VARCHAR2(400) NOT NULL,
+  REF_INO NUMBER NOT NULL,
+  REPLY_WRITER VARCHAR2(20) NOT NULL,
+  CREATE_DATE DATE DEFAULT SYSDATE NOT NULL,
+  STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN ('Y', 'N')),
+  FOREIGN KEY (REF_INO) REFERENCES INQUIRY(INQUIRY_NO),
+  FOREIGN KEY (REPLY_WRITER) REFERENCES MEMBER(MEMBER_ID)
+);
+
+COMMENT ON COLUMN INREPLY.REPLY_NO IS '댓글번호';
+COMMENT ON COLUMN INREPLY.REPLY_CONTENT IS '댓글내용';
+COMMENT ON COLUMN INREPLY.REF_INO IS '참조하는게시글번호';
+COMMENT ON COLUMN INREPLY.REPLY_WRITER IS '작성자아이디';
+COMMENT ON COLUMN INREPLY.CREATE_DATE IS '작성일';
+COMMENT ON COLUMN INREPLY.STATUS IS '상태값(Y/N)';
+
+
+
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '사실확인 후 삭제해드리겠습니다', 23,'admin', DEFAULT,'Y');
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '죄송합니다만 그렇게는 불가능할 거 같습니다', 11,'admin', DEFAULT,'Y');
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '네 가능합니다', 12,'admin', DEFAULT,'Y');
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '감사합니다. 확인 후 수정해드리겠습니다', 10,'admin', DEFAULT,'Y');
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '개인정보보호법 제 21조(개인정보의 파기)에 따라, 보유기간이 경과할 경우 5일이내에 개인정보를 파기해야합니다. 해당 유저분은 찾아본 결과 보유기간이 경과하여 복구가 불가능할거 같습니다. 죄송합니다', 9,'admin',SYSDATE,'Y');
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '죄송합니다.', 8,'admin', DEFAULT,'Y'); 
+-- 신고문의 신고내역 댓글 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 17,'admin', DEFAULT,'Y');  
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 16,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 15,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 14,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 13,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 4,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 3,'admin', DEFAULT,'Y'); 
+INSERT INTO INREPLY VALUES(SEQ_IRNO.NEXTVAL, '알겠습니다.', 2,'admin', DEFAULT,'Y'); 
+
+CREATE TABLE REPLY(
+  REPLY_NO NUMBER PRIMARY KEY,
+  REPLY_CONTENT VARCHAR2(400) NOT NULL,
+  REF_BNO NUMBER NOT NULL,
+  REPLY_WRITER VARCHAR2(20) NOT NULL,
+  CREATE_DATE DATE DEFAULT SYSDATE NOT NULL,
+  STATUS VARCHAR2(1) DEFAULT 'Y' CHECK (STATUS IN ('Y', 'N')),
+  FOREIGN KEY (REF_BNO) REFERENCES COMMUNITY(COMM_NO),
+  FOREIGN KEY (REPLY_WRITER) REFERENCES MEMBER(MEMBER_ID),
+  FOREIGN KEY (REPLY_WRITER) REFERENCES HOSPITAL(HOSP_ID)
+
+);
+
+COMMENT ON COLUMN REPLY.REPLY_NO IS '댓글번호';
+COMMENT ON COLUMN REPLY.REPLY_CONTENT IS '댓글내용';
+COMMENT ON COLUMN REPLY.REF_BNO IS '참조하는게시글번호';
+COMMENT ON COLUMN REPLY.REPLY_WRITER IS '작성자회원번호';
+COMMENT ON COLUMN REPLY.CREATE_DATE IS '작성일';
+COMMENT ON COLUMN REPLY.STATUS IS '상태값(Y/N)';
+
+
+COMMIT;
