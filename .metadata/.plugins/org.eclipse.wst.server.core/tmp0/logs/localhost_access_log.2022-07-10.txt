@@ -1,0 +1,12 @@
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/ HTTP/1.1" 200 8563
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main-animal2.png HTTP/1.1" 200 18932
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main-animal1.png HTTP/1.1" 200 103183
+0:0:0:0:0:0:0:1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main-001.png HTTP/1.1" 200 54944
+0:0:0:0:0:0:0:1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main-hospital-001.png HTTP/1.1" 200 82536
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/logo.png HTTP/1.1" 200 2694
+0:0:0:0:0:0:0:1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main-hospital-002.png HTTP/1.1" 200 35608
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/wagleqa.png HTTP/1.1" 200 125552
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET /Petist/resources/common/main.jpg HTTP/1.1" 200 765346
+127.0.0.1 - - [10/Jul/2022:22:41:34 +0900] "GET / HTTP/1.1" 404 807
+0:0:0:0:0:0:0:1 - - [10/Jul/2022:22:42:57 +0900] "GET /Petist/loginEnroll.us HTTP/1.1" 200 9811
+0:0:0:0:0:0:0:1 - - [10/Jul/2022:22:42:57 +0900] "GET /Petist/resources/common/logo.png HTTP/1.1" 304 -

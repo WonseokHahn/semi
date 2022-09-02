@@ -1,0 +1,21 @@
+package edu.kh.test.user.model.service;
+
+import static edu.kh.test.common.JDBCTemplate.getConnection;
+
+import java.sql.Connection;
+
+import edu.kh.test.user.model.dao.UserDao;
+import edu.kh.test.user.model.vo.User;
+
+public class UserService {
+	public User selectUser(int userNo) {
+		Connection conn = getConnection();
+		User u = new UserDao().selectUser(conn, userNo);
+		
+		close(conn);
+		
+		return u;
+		
+	}
+	
+}

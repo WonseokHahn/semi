@@ -1,0 +1,17 @@
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:07 +0900] "GET /Petist/ HTTP/1.1" 200 16109
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:07 +0900] "GET /Petist/resources/common/logo.png HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:08 +0900] "GET /Petist/mianHospitalList.ho HTTP/1.1" 200 2693
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:08 +0900] "GET /Petist/resources/hospital/review-icon.png HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:09 +0900] "GET /Petist/loginEnroll.us HTTP/1.1" 200 6955
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:13 +0900] "POST /Petist/login.us HTTP/1.1" 302 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:13 +0900] "GET /Petist HTTP/1.1" 302 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:13 +0900] "GET /Petist/ HTTP/1.1" 200 16422
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:14 +0900] "GET /Petist/mianHospitalList.ho HTTP/1.1" 200 2693
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:16 +0900] "GET /Petist/start.pe HTTP/1.1" 200 5198
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:16 +0900] "GET /Petist/list.pe HTTP/1.1" 200 6607
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:16 +0900] "GET /Petist/resources/pet/Petist_20220701225711_23632.png HTTP/1.1" 404 871
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:17 +0900] "GET /Petist/calender.pe?pno=59 HTTP/1.1" 200 5818
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:17 +0900] "GET /Petist/resources/pet/fullcalendar/main.css HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:17 +0900] "GET /Petist/resources/pet/fullcalendar/main.js HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:28 +0900] "GET /Petist/detail.pe?selectDate=2022-07-02&pno=59 HTTP/1.1" 200 6850
+0:0:0:0:0:0:0:1 - - [03/Jul/2022:23:42:30 +0900] "GET /Petist/updatediaryform.pe?dno=9 HTTP/1.1" 200 6121

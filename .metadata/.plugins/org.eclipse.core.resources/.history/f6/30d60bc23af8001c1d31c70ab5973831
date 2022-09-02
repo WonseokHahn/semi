@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	
+	<comment>커뮤니티 게시판 관련 쿼리문들</comment>
+	
+<entry key="selectListCount">
+	SELECT COUNT(*) COUNT
+	FROM COMMUNITY
+	WHERE STATUS = 'Y'
+	AND CATEGORY_NO = ?
+	
+</entry>
+
+
+	
+<entry key="selectList">
+		SELECT * 
+  			FROM ( SELECT ROWNUM RNUM, A.*
+         			FROM (SELECT COMM_NO, CATEGORY_NAME, COMM_TITLE, MEMBER_NAME, COMM_COUNT, CREATE_DATE
+           				    FROM COMMUNITY C
+                  			JOIN CATEGORY USING(CATEGORY_NO)
+                	   LEFT JOIN MEMBER ON (COMM_WRITER = MEMBER_NAME)
+                 		   WHERE CATEGORY_NO = ?
+                  			 AND C.STATUS = 'Y'
+                  	    ORDER BY CREATE_DATE DESC) A)
+           WHERE RNUM BETWEEN ? AND ?		
+	</entry>	
+	
+
+	
+	
+	
+</properties>
+

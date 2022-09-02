@@ -1,0 +1,13 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원 정보 조회</title>
+</head>
+<body>
+	<h3><b>회원 정보 조회(회원 번호 검색)</b></h3>
+	<input type="text" name="hospId" required maxlength="12" style="height: 34px;">
+</body>
+</html>
