@@ -1,7 +1,0 @@
-INDEX VERSION 1.4+C:\petist\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-3563385859.index
-1269119119.index
-2160430873.index
-3571319719.index
-4086079909.index
-1750165581.index
